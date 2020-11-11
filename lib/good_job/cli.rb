@@ -47,10 +47,9 @@ module GoodJob
       set_up_application!
       configuration = GoodJob::Configuration.new(options)
 
-      notifier = GoodJob::Notifier.new
       poller = GoodJob::Poller.new(poll_interval: configuration.poll_interval)
       scheduler = GoodJob::Scheduler.from_configuration(configuration)
-      notifier.recipients << [scheduler, :create_thread]
+      # notifier.recipients << [scheduler, :create_thread]
       poller.recipients << [scheduler, :create_thread]
 
       @stop_good_job_executable = false
@@ -60,10 +59,9 @@ module GoodJob
 
       Kernel.loop do
         sleep 0.1
-        break if @stop_good_job_executable || scheduler.shutdown? || notifier.shutdown?
+        break if @stop_good_job_executable || scheduler.shutdown?
       end
 
-      notifier.shutdown
       poller.shutdown
       scheduler.shutdown
     end
