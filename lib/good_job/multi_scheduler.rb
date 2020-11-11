@@ -26,8 +26,10 @@ module GoodJob
     # Delegates to {Scheduler#create_thread}.
     def create_thread(state = nil)
       results = []
-      any_true = schedulers.any? do |scheduler|
-        scheduler.create_thread(state).tap { |result| results << result }
+      any_true = false
+      schedulers.each do |scheduler|
+        ret = scheduler.create_thread(state).tap { |result| results << result }
+        any_true ||= ret
       end
 
       if any_true
